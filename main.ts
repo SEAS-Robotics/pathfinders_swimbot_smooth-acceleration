@@ -7,27 +7,37 @@ function screen_PlotNewDot_ClearOldDot_WithHeartbeat_Func (screen_x_new_num: num
     led.plotBrightness(screen_x_new_num, screen_y_new_num, screenBrightness_Heartbeat_Count_Int)
 }
 function bot_Tap_To_Turn_fn (network_ReceivedString_FromControllerJoystick_Str_ParamIn: string) {
-    if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_up") {
+    if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "tap_left") {
+        // Button "D" press handler.
         images.createImage(`
-            # . . . .
-            . # . . .
-            . . # . .
-            . . . . .
-            . . . . .
+            # # # . .
+            # # . . .
+            # . # . .
+            . . . # .
+            . . . . #
             `).showImage(0, 0)
-    } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_down") {
+        tap_left_turn_bias = 0.7
+        tap_right_turn_bias = 1
+    } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "tap_right") {
         images.createImage(`
-            . . . . .
-            . . . . .
-            . . # . .
+            . . # # #
+            . . . # #
+            . . # . #
             . # . . .
             # . . . .
             `).showImage(0, 0)
-        quest_Note_1.quest_Show_String_For_Note_Small_Func(
-        "GeekServo-360-Degrees-2kg:360-degrees(not 180-degrees)"
-        )
+        tap_left_turn_bias = 1
+        tap_right_turn_bias = 0.7
     } else {
-    	
+        images.createImage(`
+            . . . . .
+            . . . . .
+            . . # . .
+            . . . . .
+            . . . . .
+            `).showImage(0, 0)
+        tap_left_turn_bias = 1
+        tap_right_turn_bias = 1
     }
 }
 function screen_Clear_Func () {
@@ -1207,28 +1217,30 @@ basic.forever(function () {
         "Network Message Max_Character_Length: 19"
         )
         if (_system_Hw_DeviceType__Now__Id_Int == _system_Hw_DeviceType__Controller_Joystick__ID_INT && (_system_Sw_ModeState__Now__Id_Int == _system_Sw_ModeState__Run__AndShow_01_DeviceType__ID_INT || _system_Sw_ModeState__Now__Id_Int == _system_Sw_ModeState__Run__AndShow_02_GroupChannelNum__ID_INT)) {
-            if (joystickbit.getButton(joystickbit.JoystickBitPin.P13)) {
+            if (joystickbit.getButton(joystickbit.JoystickBitPin.P12)) {
+                // Button "D" press handler.
                 images.createImage(`
-                    # . . . .
-                    . # . . .
-                    . . # . .
-                    . . . . .
-                    . . . . .
+                    # # # . .
+                    # # . . .
+                    # . # . .
+                    . . . # .
+                    . . . . #
                     `).showImage(0, 0)
-                radio.sendString("arm_up")
+                radio.sendString("tap_left")
                 quest_Note_1.quest_Show_String_For_Note_Small_Func(
                 "Following 0-Reset to Allow Idle/Stop Afterwards"
                 )
                 controller__Polar_OriginAtCenter__MagnitudePixel__PreviousCycles_IdleCount__Int = 0
-            } else if (joystickbit.getButton(joystickbit.JoystickBitPin.P12)) {
+            } else if (joystickbit.getButton(joystickbit.JoystickBitPin.P13)) {
+                // Button "C" press handler.
                 images.createImage(`
-                    . . . . .
-                    . . . . .
-                    . . # . .
+                    . . # # #
+                    . . . # #
+                    . . # . #
                     . # . . .
                     # . . . .
                     `).showImage(0, 0)
-                radio.sendString("arm_down")
+                radio.sendString("tap_right")
                 quest_Note_1.quest_Show_String_For_Note_Small_Func(
                 "Following 0-Reset to Allow Idle/Stop Afterwards"
                 )
