@@ -6,6 +6,30 @@ function screen_PlotNewDot_ClearOldDot_WithHeartbeat_Func (screen_x_new_num: num
     screen_XY_Brightness_Old_Num = led.pointBrightness(screen_x_new_num, screen_y_new_num)
     led.plotBrightness(screen_x_new_num, screen_y_new_num, screenBrightness_Heartbeat_Count_Int)
 }
+function bot_Tap_To_Turn_fn (network_ReceivedString_FromControllerJoystick_Str_ParamIn: string) {
+    if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_up") {
+        images.createImage(`
+            # . . . .
+            . # . . .
+            . . # . .
+            . . . . .
+            . . . . .
+            `).showImage(0, 0)
+    } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_down") {
+        images.createImage(`
+            . . . . .
+            . . . . .
+            . . # . .
+            . # . . .
+            # . . . .
+            `).showImage(0, 0)
+        quest_Note_1.quest_Show_String_For_Note_Small_Func(
+        "GeekServo-360-Degrees-2kg:360-degrees(not 180-degrees)"
+        )
+    } else {
+    	
+    }
+}
 function screen_Clear_Func () {
     for (let index_X = 0; index_X <= 4; index_X++) {
         for (let index_Y = 0; index_Y <= 4; index_Y++) {
@@ -92,8 +116,8 @@ function bot_Servo_Motors_Basic_Fn (network_ReceivedString_FromControllerJoystic
         // //jwc o roboQuest.powerMotorsViaBlueRedBlackPins(PortGroup_BlueRedBlack__PortIds__Enum.S1_MotorLeft__S0_MotorRight, motor_Power_ZERO_INT, motor_Power_ZERO_INT)
         quest_Motors.quest_Set_PowerMotorsViaBlueRedBlackPins_Func(
         quest_PortGroup_BlueRedBlack_PortIds_Enum.S1_MotorLeft__S0_MotorRight,
-        normal_accel_speed,
-        normal_accel_speed
+        normal_accel_speed * tap_right_turn_bias,
+        normal_accel_speed * tap_left_turn_bias
         )
     } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "backward") {
         images.createImage(`
@@ -131,13 +155,13 @@ function bot_Servo_Motors_Basic_Fn (network_ReceivedString_FromControllerJoystic
                     normal_accel_speed = 0 - max_normal_speed
                 }
             }
+            // //jwc o roboQuest.powerMotorsViaBlueRedBlackPins(PortGroup_BlueRedBlack__PortIds__Enum.S1_MotorLeft__S0_MotorRight, motor_Power_ZERO_INT, motor_Power_ZERO_INT)
+            quest_Motors.quest_Set_PowerMotorsViaBlueRedBlackPins_Func(
+            quest_PortGroup_BlueRedBlack_PortIds_Enum.S1_MotorLeft__S0_MotorRight,
+            normal_accel_speed * tap_left_turn_bias,
+            normal_accel_speed * tap_right_turn_bias
+            )
         }
-        // //jwc o roboQuest.powerMotorsViaBlueRedBlackPins(PortGroup_BlueRedBlack__PortIds__Enum.S1_MotorLeft__S0_MotorRight, motor_Power_ZERO_INT, motor_Power_ZERO_INT)
-        quest_Motors.quest_Set_PowerMotorsViaBlueRedBlackPins_Func(
-        quest_PortGroup_BlueRedBlack_PortIds_Enum.S1_MotorLeft__S0_MotorRight,
-        normal_accel_speed,
-        normal_accel_speed
-        )
     } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "left") {
         last_joystick_command = 0
         images.createImage(`
@@ -189,75 +213,6 @@ function bot_Servo_Motors_Basic_Fn (network_ReceivedString_FromControllerJoystic
         )
     }
 }
-function bot_Servo_Arms_Fn (network_ReceivedString_FromControllerJoystick_Str_ParamIn: string) {
-    if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_up") {
-        images.createImage(`
-            # . . . .
-            . # . . .
-            . . # . .
-            . . . . .
-            . . . . .
-            `).showImage(0, 0)
-        quest_Note_1.quest_Show_String_For_Note_Small_Func(
-        "If [0|360] is jittery, insure battery at 75% power min."
-        )
-        quest_Note_1.quest_Show_String_For_Note_Small_Func(
-        "GeekServo-360-Degrees-2kg:360-degrees(not 180-degrees)"
-        )
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S7_ServoArm_Left,
-        quest_ServoArm_DegreesInDirection_Enum.Up,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S6_ServoArm_Right,
-        quest_ServoArm_DegreesInDirection_Enum.Up,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-    } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_down") {
-        images.createImage(`
-            . . . . .
-            . . . . .
-            . . # . .
-            . # . . .
-            # . . . .
-            `).showImage(0, 0)
-        quest_Note_1.quest_Show_String_For_Note_Small_Func(
-        "If [0|360] is jittery, insure battery at 75% power min."
-        )
-        quest_Note_1.quest_Show_String_For_Note_Small_Func(
-        "GeekServo-360-Degrees-2kg:360-degrees(not 180-degrees)"
-        )
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S7_ServoArm_Left,
-        quest_ServoArm_DegreesInDirection_Enum.Down,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S6_ServoArm_Right,
-        quest_ServoArm_DegreesInDirection_Enum.Down,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-    } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "arm_back") {
-        images.createImage(`
-            . . . . #
-            . . . # .
-            . . # . .
-            . . . . .
-            . . . . .
-            `).showImage(0, 0)
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S7_ServoArm_Left,
-        quest_ServoArm_DegreesInDirection_Enum.Back,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-        quest_Motors.quest_Set_AutoDegrees_ForServoArm_Func(
-        quest_PortSingle_ServoArm_PortId_Enum.S6_ServoArm_Right,
-        quest_ServoArm_DegreesInDirection_Enum.Back,
-        quest_Debug_Show_Enum.Dashboard_OLED
-        )
-    }
-}
 function bot_Servo_Motors_Turbo_Fn (network_ReceivedString_FromControllerJoystick_Str_ParamIn: string) {
     if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "forward_turbo") {
         images.createImage(`
@@ -270,11 +225,11 @@ function bot_Servo_Motors_Turbo_Fn (network_ReceivedString_FromControllerJoystic
         turbo_mode = 1
     } else if (network_ReceivedString_FromControllerJoystick_Str_ParamIn == "turbo_off") {
         images.createImage(`
-            # . # # .
-            . # . . #
-            # . # . #
-            # . . # .
-            . # # . #
+            . . . . .
+            . . . . .
+            . . # . .
+            . . . . .
+            . . . . .
             `).showImage(0, 0)
         turbo_mode = 0
     }
@@ -560,7 +515,7 @@ radio.onReceivedString(function (receivedString) {
         if (_system_Hw_DeviceType__Now__Id_Int == _system_Hw_DeviceType__Bot__ID_INT && (_system_Sw_ModeState__Now__Id_Int == _system_Sw_ModeState__Run__AndShow_01_DeviceType__ID_INT || _system_Sw_ModeState__Now__Id_Int == _system_Sw_ModeState__Run__AndShow_02_GroupChannelNum__ID_INT)) {
             bot_Servo_Motors_Basic_Fn(receivedString)
             bot_Servo_Motors_Turbo_Fn(receivedString)
-            bot_Servo_Arms_Fn(receivedString)
+            bot_Tap_To_Turn_fn(receivedString)
             network__CpuCycle_Post__Management_Func()
         } else if (_system_Hw_DeviceType__Now__Id_Int == _system_Hw_DeviceType__Null__ID_INT) {
             quest_Note_3.quest_Show_String_For_Note_Big_Func(
@@ -778,6 +733,8 @@ let screenBrightness_Heartbeat_Count_Int = 0
 let screen_XY_Brightness_Old_Num = 0
 let screen_Y_Old_Num = 0
 let screen_X_Old_Num = 0
+let tap_right_turn_bias = 0
+let tap_left_turn_bias = 0
 let max_turbo_speed = 0
 let max_normal_speed = 0
 let accel_rate = 0
@@ -806,10 +763,15 @@ turbo_mode = 0
 // The accel ramp doesn't have to start at 0. Initial testing showed that while setting any value from 0 to 100 is possible, starting speeds of over 20 caused tire slippage.  This condition can vary by terrain type.
 normal_start_speed = 20
 // This variable controls the rate of the acceleration ramp-- how long the bot takes to get from zero to max. In initial testing 1 worked well, 2 produced tire slippage.
-accel_rate = 1
-max_normal_speed = 60
+accel_rate = 5
+max_normal_speed = 99
 // This value will determine the maximum speed to which the bot will accelerate before topping out. Valid range is 0 to 100.
 max_turbo_speed = 99
+quest_Note_4.quest_Show_String_For_Note_Small_Func(
+"Tap-to-turn variables"
+)
+tap_left_turn_bias = 1
+tap_right_turn_bias = 1
 quest_Note_1.quest_Show_String_For_Note_Big_Func(
 "Below, Setup Code for Student:"
 )
@@ -1002,6 +964,14 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
+    quest_Note_1.quest_Show_String_For_Note_Small_Func(
+    "Ver 2.11.0: 25-0528-1900"
+    )
+    quest_Note_1.quest_Show_String_For_Note_Small_Func(
+    "©️ 2025 Quest Institute. All rights reserved."
+    )
+})
+basic.forever(function () {
     quest_Note_6.quest_Show_String_For_Note_Big_Func(
     ""
     )
@@ -1188,14 +1158,6 @@ basic.forever(function () {
         "Network Message Max_Character_Length: 19"
         )
     }
-})
-basic.forever(function () {
-    quest_Note_1.quest_Show_String_For_Note_Small_Func(
-    "Ver 2.11.0: 25-0528-1900"
-    )
-    quest_Note_1.quest_Show_String_For_Note_Small_Func(
-    "©️ 2025 Quest Institute. All rights reserved."
-    )
 })
 basic.forever(function () {
     if (true) {
